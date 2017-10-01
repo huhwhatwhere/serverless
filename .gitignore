@@ -1,0 +1,9 @@
+
+# don't check in Python's env folder
+env
+
+# zappa workspace
+ansible/zappa_workspace
+
+# mac
+.DS_Store
