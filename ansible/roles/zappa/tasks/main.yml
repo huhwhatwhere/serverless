@@ -1,0 +1,40 @@
+---
+  - name: Create working directory
+    file:
+      path: "{{zappa_tmp_dir}}"
+      state: directory
+      mode: 0777
+
+  # - name: create s3 bucket for static content
+  #   s3_bucket:
+  #     name: "{{ s3_website_bucket_name }}"
+  #     policy: "{{ lookup('template', 's3_bucket_policy.json.j2') }}"
+  #     state: present
+  #     region: "eu-west-1"
+  #   register: static_bucket
+
+  - name: copy zappa config to the correct location
+    template:
+      src=zappa_settings.yml.j2
+      dest="{{zappa_tmp_dir}}/zappa_settings.yml"
+
+  - name: "Copy the Application to the working directory: {{ zappa_tmp_dir }}"
+    template:
+      src=abz.py.j2
+      dest="{{zappa_tmp_dir}}/abz.py"
+
+  - name: zappa deploy app if not done already or check status
+    shell: zappa deploy
+    args:
+      chdir: "{{ zappa_tmp_dir }}"
+      executable: /bin/bash
+    ignore_errors: yes
+    register: zappa_deploy
+
+  - name: zappa update if zappa has already deployed
+    shell: zappa update
+    args:
+      chdir: "{{ zappa_tmp_dir }}"
+      executable: /bin/bash
+    ignore_errors: yes
+    when: zappa_deploy.stdout.find('already deployed')

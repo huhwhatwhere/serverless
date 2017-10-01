@@ -1,0 +1,4 @@
+---
+
+s3_website_bucket_name: abz-static-content-s3-bucket
+zappa_tmp_dir: "zappa_workspace/clearscore"
