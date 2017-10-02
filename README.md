@@ -1,1 +1,1 @@
-# ClearSore
+# Serverless using Zappa
