@@ -1,17 +1,29 @@
 ---
   - name: Create working directory
     file:
-      path: "{{zappa_tmp_dir}}"
+      path: "{{zappa_tmp_dir}}/static"
       state: directory
       mode: 0777
 
-  # - name: create s3 bucket for static content
-  #   s3_bucket:
-  #     name: "{{ s3_website_bucket_name }}"
-  #     policy: "{{ lookup('template', 's3_bucket_policy.json.j2') }}"
-  #     state: present
-  #     region: "eu-west-1"
-  #   register: static_bucket
+  - name: create s3 bucket for static content
+    s3_bucket:
+      name: "{{ s3_website_bucket_name }}"
+      policy: "{{ lookup('template', 's3_bucket_policy.json.j2') }}"
+      state: present
+      region: "eu-west-1"
+
+  - name: upload static assets
+    s3:
+      bucket: "{{ s3_website_bucket_name }}"
+      object: lambda-all-the-things.jpg
+      src: roles/zappa/files/lambda-all-the-things.jpg
+      region: "eu-west-1"
+      mode: put
+
+  - name: copy static assets to working directory
+    template:
+      src=index.html.j2
+      dest="{{zappa_tmp_dir}}/static/index.html"
 
   - name: copy zappa config to the correct location
     template:
@@ -19,8 +31,8 @@
       dest="{{zappa_tmp_dir}}/zappa_settings.yml"
 
   - name: "Copy the Application to the working directory: {{ zappa_tmp_dir }}"
-    template:
-      src=abz.py.j2
+    copy:
+      src=abz.py
       dest="{{zappa_tmp_dir}}/abz.py"
 
   - name: zappa deploy app if not done already or check status
