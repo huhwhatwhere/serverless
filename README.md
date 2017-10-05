@@ -8,7 +8,7 @@ Dependencies
 * Python 2.7
 * Python Pip
 * Python Virtualenv
-* awscli
+* awscli (set credentials file)
 * AWS account
 
 Setup
