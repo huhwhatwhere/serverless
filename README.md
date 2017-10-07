@@ -5,7 +5,7 @@ Using Zappa (Serverless Python Framework) to build a static website
 Dependencies
 ------------
 * Homebrew (OSX)
-* Python 2.7
+* Tested on Python 2.7, but can use Python 3.6
 * Python Pip
 * Python Virtualenv
 * awscli (set credentials file)
